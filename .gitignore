@@ -1,0 +1,51 @@
+# Target directories.
+target/
+# Eclipse configuration.
+.classpath
+.project
+.metadata/
+.settings/
+.mvn/
+# Tapestry exception report.
+build/
+
+
+
+# compiled output
+Angular/dist
+Angular/tmp
+Angular/out-tsc
+
+# dependencies
+Angular/node_modules
+
+# IDEs and editors
+Angular/.idea
+Angular/.project
+Angular/.classpath
+Angular/.c9/
+Angular/*.launch
+Angular/.settings/
+Angular/*.sublime-workspace
+Angular/.editorconfig
+
+# IDE - VSCode
+Angular/.vscode/*
+Angular/!.vscode/settings.json
+Angular/!.vscode/tasks.json
+Angular/!.vscode/launch.json
+Angular/!.vscode/extensions.json
+
+# misc
+Angular/.sass-cache
+Angular/connect.lock
+Angular/coverage
+Angular/libpeerconnection.log
+Angular/npm-debug.log
+Angular/yarn-error.log
+Angular/testem.log
+Angular/typings
+
+# System Files
+Angular/.DS_Store
+Angular/Thumbs.db

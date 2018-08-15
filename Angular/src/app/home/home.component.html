@@ -1,0 +1,45 @@
+﻿<img [src]="'data:image/jpg;base64,'+currentUser.userPicture" style="float:right;width:100px;height:100px;border-radius: 100%;"/>
+<h1>Hi {{currentUser.userLogin}} with id {{currentUser.userId}}!</h1>	
+<p>You're logged in with Angular 6!!</p>
+<h3>Search Tv Show</h3>
+<ul>
+    <li *ngFor="let user of users">
+        {{user.userLogin}}: (id:{{user.userId}}email:{{user.userEmail}} picture:{{user.userPicture}})
+        <!--<a (click)="deleteUser(user.userId)" class="text-danger">Delete</a>-->
+    </li>
+</ul>
+<!--
+<div>
+	<input type="text" class="clearable" ng-model="searchText"/>
+	<i class="glyphicon" ng-class="searchIcon" ng-hide="clearEnable" ng-click="search()"></i>
+	<i class="glyphicon" ng-class="searchIcon" ng-show="clearEnable" ng-click="clear()"></i>
+</div>
+-->
+<!--
+<div>
+	<input type="text" (ngSubmit)="onSearch()"/>
+<div>
+-->
+<!--
+<div>
+	<mat-form-field (ngSubmit)='onSearch($event)' color='primary' id='search-input' class='full-width' appearance='outline'>
+	    <mat-label color='red'>Search</mat-label>
+	    <input #searchBar matInput  [(ngModel)]='searchValue' name='searchBar' [value]='searchValue' (keyup.enter)='onSearch($event)'>
+	</mat-form-field>
+</div>
+<button mat-raised-button color="primary" (click)='onSearch(searchBar.value)' id='submit-search' type='submit' for='searchBar'>Submit</button>
+-->
+
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="tvShowTitle">Search for TV Show</label>
+        <input type="text" [formControl]="tvShowTitle"/>
+    </div>
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">Search</button>
+    </div>
+</form>
+<p>
+  Value: {{ tvShowTitle.value }}
+</p>
+<p><a [routerLink]="['/login']">Logout</a></p>

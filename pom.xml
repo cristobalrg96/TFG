@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>tfg.ws.app</groupId>
+    <artifactId>ws-app</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0.0</version>
+    <name>WS App Project</name>
+
+    <properties>
+        <!-- Data source properties -->
+        <dataSource.user>tfgTM</dataSource.user>
+        <dataSource.password>tfgTM</dataSource.password>
+        <dataSource.jndiName>jdbc/TvMovies</dataSource.jndiName>
+        <testDataSource.user>${dataSource.user}</testDataSource.user>
+        <testDataSource.password>${dataSource.password}</testDataSource.password>
+
+        <!-- Hibernate properties -->
+        <hibernate.show_sql>true</hibernate.show_sql>
+        <hibernate.format_sql>true</hibernate.format_sql>
+        <hibernate.use_sql_comments>true</hibernate.use_sql_comments>
+
+        <!-- Encoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Package versions -->
+        <slf4j.version>1.7.21</slf4j.version>
+        <javassist.version>3.21.0-GA</javassist.version>
+        <cglib.version>3.2.3</cglib.version>
+        <hibernate.version>5.2.7.Final</hibernate.version>
+        <spring.version>4.3.6.RELEASE</spring.version>
+        <springboot.version>1.5.8.RELEASE</springboot.version>
+        <jayway.version>2.0.0</jayway.version>
+        <commonsDbcp.version>2.1.1</commonsDbcp.version>
+        <junit.version>4.12</junit.version>
+        <servletApi.version>2.3</servletApi.version>
+        <httpclient.version>4.5.2</httpclient.version>
+        <jdom2.version>2.0.6</jdom2.version>
+        <java.version>1.8</java.version>
+		<json.version>20160810</json.version>
+
+        <!-- JDBC driver properties -->
+        <jdbcDriver.groupId>mysql</jdbcDriver.groupId>
+        <jdbcDriver.artifactId>mysql-connector-java</jdbcDriver.artifactId>
+        <jdbcDriver.version>8.0.11</jdbcDriver.version>
+        <jdbcDriver.className>com.mysql.cj.jdbc.Driver</jdbcDriver.className>
+
+        <!--  Data source properties -->
+        <dataSource.baseUrl>jdbc:mysql://localhost/TvMovies</dataSource.baseUrl>
+        <dataSource.url>${dataSource.baseUrl}?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</dataSource.url>
+        <testDataSource.url>${dataSource.baseUrl}test?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</testDataSource.url>
+        <dataSource.createTablesScript>1-CreateTables.sql</dataSource.createTablesScript>
+        <dataSource.createDataScript>2-CreateData.sql</dataSource.createDataScript>
+        
+        <!-- Plugin versions -->
+        <mavenCompilerPlugin.version>3.5.1</mavenCompilerPlugin.version>
+        <mavenResourcesPlugin.version>3.0.1</mavenResourcesPlugin.version>
+        <sqlMavenPlugin.version>1.5</sqlMavenPlugin.version>
+        <pojo-modelutil.version>2.3.1</pojo-modelutil.version>     
+        <jettyMavenPlugin>9.3.10.v20160621</jettyMavenPlugin>
+        
+    </properties>
+
+    <!-- ========================================================== -->
+    <!-- Profiles -->
+    <profiles>
+        <profile>
+            <id>win</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <tool.wsgen>${java.home}/../bin/wsgen.exe</tool.wsgen>
+                <tool.wsimport>${java.home}/../bin/wsimport.exe</tool.wsimport>
+            </properties>
+        </profile>
+        <profile>
+            <id>nix</id>
+            <activation>
+                <os>
+                    <family>!windows</family>
+                </os>
+            </activation>
+            <properties>
+                <tool.wsgen>${java.home}/../bin/wsgen</tool.wsgen>
+                <tool.wsimport>${java.home}/../bin/wsimport</tool.wsimport>
+            </properties>
+        </profile>
+        
+        <profile>
+            <id>postgresql</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Hibernate properties -->
+                <hibernate.dialect>org.hibernate.dialect.PostgreSQlDialect</hibernate.dialect>
+    			<hibernate.show_sql>true</hibernate.show_sql>
+            </properties>
+        </profile>
+    </profiles>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.8.RELEASE</version>
+        <relativePath></relativePath>
+    </parent>
+
+    <dependencies>
+        <!-- JDBC driver -->
+        <dependency>
+            <groupId>${jdbcDriver.groupId}</groupId>
+            <artifactId>${jdbcDriver.artifactId}</artifactId>
+            <version>${jdbcDriver.version}</version>
+        </dependency>
+        <!-- Commons DBCP - JDBC Connection Pool -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${commonsDbcp.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- SLF4J (required by Hibernate) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Javassist (required by Hibernate) -->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>${javassist.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- CGLIB (required by Spring) -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency> 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <!-- SpringBoot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+		   <groupId>org.json</groupId>
+		   <artifactId>json</artifactId>
+		   <version>${json.version}</version>
+		</dependency>
+    </dependencies>
+
+    <build>
+        <!-- =============================================================== -->
+        <!-- Filtering -->
+        <resources>
+
+            <!-- Apply filtering to files matching the following expressions 
+                in src/main/resources. -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>spring-config.xml</include> 
+                    <include>hibernate-config.xml</include>
+                </includes>
+            </resource>
+
+            <!-- Continue considering resources the files in src/main/resources, 
+                but without applying filtering. -->
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <testResources>
+
+            <!-- Apply filtering to files matching the following expressions 
+                in src/test/resources. -->
+            <!-- 
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>spring-config-test.xml</include>
+                </includes>
+            </testResource>
+            -->
+            <!-- Continue considering resources the files in src/test/resources, 
+                but without applying filtering. -->
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+
+        </testResources>
+        <pluginManagement>
+            <plugins>
+            <!-- 
+                 Added to avoid problems with the maven plugin for 
+                 eclipse
+            -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>sql-maven-plugin</artifactId>
+                                        <versionRange>${sqlMavenPlugin.version}</versionRange>
+                                        <goals>
+                                            <goal>execute</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- ========================================================== -->
+            <!-- Compiler configuration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mavenCompilerPlugin.version}</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+            </plugin>
+            
+            <!-- ========================================================== -->
+            <!-- Resources plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${mavenResourcesPlugin.version}</version>
+            </plugin>
+
+            <!-- ========================================================== -->
+            <!-- Exec plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+            </plugin>
+            
+            <!-- ========================================================== -->
+            <!-- Setting SQL Plugin -->
+            <!-- - Configuration specifies onError="continue" since SQL scripts 
+                try to drop tables before creating them (which causes errors if such tables 
+                do not exist yet). - Configuartion specifies autocommit="true" since some 
+                drivers (e.g the PostgreSQL JDBC 2 driver) do not commit changes if some 
+                error ocurrs. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>${sqlMavenPlugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbcDriver.groupId}</groupId>
+                        <artifactId>${jdbcDriver.artifactId}</artifactId>
+                        <version>${jdbcDriver.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <driver>${jdbcDriver.className}</driver>
+                    <url>${dataSource.url}</url>
+                    <username>${dataSource.user}</username>
+                    <password>${dataSource.password}</password>
+                    <autocommit>true</autocommit>
+                    <onError>continue</onError>
+                    <orderFile>ascending</orderFile> 
+                    <fileset>
+                        <basedir>${basedir}</basedir>
+                        <includes>
+                            <include>src/sql/${dataSource.createTablesScript}</include>
+                            <include>src/sql/${dataSource.createDataScript}</include>
+                        </includes>
+                    </fileset>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-tables-for-testing</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <driver>${jdbcDriver.className}</driver>
+                            <url>${testDataSource.url}</url>
+                            <username>${testDataSource.user}</username>
+                            <password>${testDataSource.password}</password>
+                            <autocommit>true</autocommit>
+                            <onError>continue</onError>
+                            <fileset>
+                                <basedir>${basedir}</basedir>
+                                <includes>
+                                    <include>
+                                        src/sql/${dataSource.createTablesScript}
+                                    </include>
+                                </includes>
+                            </fileset>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ========================================================== -->
+            <!-- Jetty configuration -->
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jettyMavenPlugin}</version>
+
+                <configuration>
+                    <httpConnector>
+                        <port>9090</port>
+                    </httpConnector>
+                    <webAppConfig>
+                        <contextPath>/${project.artifactId}</contextPath>
+                        <jettyEnvXml>target/jetty/jetty-env.xml</jettyEnvXml>
+                    </webAppConfig>
+                    <reload>manual</reload>
+                </configuration>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbcDriver.groupId}</groupId>
+                        <artifactId>${jdbcDriver.artifactId}</artifactId>
+                        <version>${jdbcDriver.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-jdbc</artifactId>
+                        <version>${spring.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            
+            <!-- ========================================================== -->
+            <!-- Springboot plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

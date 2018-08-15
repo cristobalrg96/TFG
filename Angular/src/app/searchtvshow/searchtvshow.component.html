@@ -1,0 +1,11 @@
+﻿<h1>Hi {{currentUser.userLogin}} with id {{currentUser.userId}}!</h1>   
+<h2>TV Shows:</h2>
+<ul>
+    <li *ngFor="let tvShow of tvShows" style="list-style-type:none">
+    	<img [src]=tvShow.tvShowPicture style="width:100px;height:150px;"/>
+        <h4>{{tvShow.tvShowTitle}}</h4>
+    </li>
+</ul>
+<br/>
+<br/>
+<p><a [routerLink]="['/']">Home</a></p>
